@@ -29,3 +29,8 @@ what are hooks ?
 
 - testing: can use aws lambda ???
 
+endpoint returns random image
+gif, jpeg, webm, svg, png
+
+post mande info de usuario 
+
