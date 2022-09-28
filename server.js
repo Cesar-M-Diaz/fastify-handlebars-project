@@ -12,9 +12,24 @@
 const fastify = require('fastify')
 const fastifyStatic = require('@fastify/static')
 const path = require('path')
+const fs = require('fs')
 
-// const server = fastify({logger: true})
-const server = fastify()
+const config = {
+  development: {
+    transport: {
+      target: 'pino-pretty',
+      options: {
+        translateTime: 'HH:MM:ss Z',
+        ignore: 'pid,hostname',
+      },
+    },
+  },
+  production: true,
+  test: false,
+}
+
+const server = fastify({logger: config['development']})
+// const server = fastify()
 
 // load the plugin
 server.register(fastifyStatic, {
@@ -30,13 +45,15 @@ server.get('/get-images', async (request, reply) => {
     'video/webm': 'planet.webm',
   }
   const randNum = Math.floor(Math.random() * 5)
-  const randKey = Object.keys(files)[randNum]
+  const contentType = Object.keys(files)[randNum]
 
-  console.log(randKey, files[randKey])
+  console.log(contentType, files[contentType])
 
-  reply.type(randKey).code(200)
-  return reply.sendFile(files[randKey])
+  reply.type(contentType).code(200)
+  return reply.sendFile(files[contentType])
 })
+
+server.post()
 
 server.listen({ port: 3000 }, (err, address) => {
   if (err) throw err
