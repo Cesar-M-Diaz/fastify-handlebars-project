@@ -10,18 +10,12 @@
 // import fastify from "fastify"
 
 const fastify = require('fastify')
-const fastifyStatic = require('@fastify/static')
 const path = require('path')
-const fs = require('fs')
 
 const config = {
   development: {
     transport: {
-      target: 'pino-pretty',
-      options: {
-        translateTime: 'HH:MM:ss Z',
-        ignore: 'pid,hostname',
-      },
+      target: 'pino-pretty'
     },
   },
   production: true,
@@ -32,29 +26,12 @@ const server = fastify({logger: config['development']})
 // const server = fastify()
 
 // load the plugin
-server.register(fastifyStatic, {
+server.register(require('@fastify/static'), {
   root: path.join(__dirname, 'public')
 })
 
-server.get('/get-images', async (request, reply) => {
-  const files = {
-    'image/png': 'image.png',
-    'image/gif': 'giffy.gif',
-    'image/jpeg': 'fine.jpeg',
-    'image/svg+xml': 'falcon.svg',
-    'video/webm': 'planet.webm',
-  }
-  const randNum = Math.floor(Math.random() * 5)
-  const contentType = Object.keys(files)[randNum]
+server.register(require('./routes'))
 
-  console.log(contentType, files[contentType])
-
-  reply.type(contentType).code(200)
-  return reply.sendFile(files[contentType])
-})
-
-server.post()
-
-server.listen({ port: 3000 }, (err, address) => {
+server.listen({ port: 3001 }, (err, address) => {
   if (err) throw err
 })
