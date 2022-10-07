@@ -12,26 +12,41 @@
 const fastify = require('fastify')
 const path = require('path')
 
-const config = {
-  development: {
-    transport: {
-      target: 'pino-pretty'
-    },
-  },
-  production: true,
-  test: false,
-}
+// const server = fastify({
+//   logger: {
+//     transport: {
+//       target: 'pino-pretty'
+//     }
+//   }
+// })
+const server = fastify()
 
-const server = fastify({logger: config['development']})
-// const server = fastify()
+server.register(require('@fastify/cors'), { origin: 'http://localhost:5173' })
+
+server.register(require('@fastify/formbody'))
 
 // load the plugin
 server.register(require('@fastify/static'), {
   root: path.join(__dirname, 'public')
 })
 
+server.register(require("@fastify/view"), {
+  root: path.join(__dirname, "views"),
+  engine: {
+    handlebars: require("handlebars"),
+  },
+  layout: 'layouts/index.hbs',
+  options: {
+    partials: {
+      header: 'partials/header.hbs',
+      footer: 'partials/footer.hbs'
+    }
+  } 
+})
+
+// routes get loaded as plugins
 server.register(require('./routes'))
 
-server.listen({ port: 3001 }, (err, address) => {
+server.listen({ port: 3000 }, (err, address) => {
   if (err) throw err
 })

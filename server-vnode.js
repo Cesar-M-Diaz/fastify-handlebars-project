@@ -17,10 +17,12 @@ const server = http.createServer((req, res) => {
 
   const filePath = path.join(__dirname, 'public', files[contentType])
 
-  fs.readFile(filePath, (err, content) => {
-    res.writeHead(200, { "Content-type": contentType })
-    res.end(content, 'utf8')
-  })
+  // fs.readFile(filePath, (err, content) => {
+  //   res.writeHead(200, { "Content-type": contentType })
+  //   res.end(content, 'utf8')
+  // })
+
+  fs.createReadStream.apply(filePath).pipe(res)
 
 })
 

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<div>
+  <h1>Create a user</h1>
+  <form action="/user" method="post" >
+    <label for="name">Name:</label>
+    <input type="text" name="name" id="name" placeholder='type your name here'>
+    <label for="email">Email:</label>
+    <input type="text" name="email" id="email" placeholder='type your email here'>
+    <button class="btn" type="submit">Add User</button>
+  </form>
+</div>
+<div>
+  <button onclick="window.location.href='/users'">Manage users</button>
+</div>
