@@ -2,34 +2,7 @@ const users = require('./users.json')
 const { writeFile } = require('node:fs')
 const { readFile } = require('node:fs/promises')
 const { join } = require('node:path')
-
-const postInfoOpts = {
-  schema: {
-    body: {
-      type: 'object',
-      required: ['name', 'email'],
-      properties: {
-        name: { 
-          type: 'string',
-          minLength: 2
-        },
-        email: { 
-          type: 'string',
-          minLength: 2
-        },
-      }
-    },
-    response: {
-      200: {
-        type: 'object',
-        properties: {
-          name: { type: 'string' },
-          email: { type: 'string' }
-        }
-      }
-    }
-  }
-}
+const { postInfoOpts, userIdOpts } = require('./schemas')
 
 function routes (server, options, done) {
   
@@ -70,14 +43,14 @@ function routes (server, options, done) {
     reply.redirect(302, `/user/${(users.length)}`)
   })
 
-  server.get('/user/:id', async (req, reply) => {
+  server.get('/user/:id', userIdOpts, async (req, reply) => {
     const { id } = req.params
     const result = await readFile(join(__dirname, 'users.json'), 'utf8')
     const lastUser = JSON.parse(result)[id - 1]
     if (lastUser) {
       return reply.view('response.hbs', { user: lastUser })
     } else {
-      return reply.code(404).view('error.hbs', { userNotFound, message: "User not found" } )
+      return reply.code(404).view('error.hbs', { userNotFound: true, message: "User not found" } )
     }
   })
 
@@ -91,13 +64,29 @@ function routes (server, options, done) {
     return reply.code(200).view('response.hbs', { users: parsedUsers })
   })
 
+  // server.delete('/users/:id', (req, reply) => {
+  //   const { id } = req.params
+  //   const filteredUsers = users.filter(user => Number(id) !== user.id)
+
+  //   writeFile(join(__dirname, 'users.json'), JSON.stringify(filteredUsers), (error) => {
+  //     if (error) {
+  //       req.log.error(error)
+  //     }
+  //   })
+  
+  //   reply.redirect(302, '/')
+  // })
+
+  // server.put('users/:id', (req, reply) => {
+    
+  // })
+
   server.setErrorHandler((error, req, reply) => {
-    console.log(error)
     reply.code(error.statusCode).view('error.hbs', { code: error.statusCode, message: error.validation[0].message })
   })
 
   server.setNotFoundHandler((req, reply) => {
-    reply.code(404).view('error.hbs', { pageNotFound })
+    reply.code(404).view('error.hbs', { pageNotFound: true })
   })
 
   done()

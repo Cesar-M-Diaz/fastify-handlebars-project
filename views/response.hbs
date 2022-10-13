@@ -18,20 +18,21 @@
     margin: auto;
   }
 
-  button {
-    font: inherit;
-    border: 1px solid #00695c;
-    color: #00695c;
-    background: white;
-    border-radius: 3px;
-    cursor: pointer;
-  }
+button {
+  font: inherit;
+  border: 1px solid #0b83ae;
+  color: #0b83ae;
+  background: white;
+  border-radius: 3px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
 
-  button:hover,
-  button:active {
-    background-color: #00695c;
-    color: white;
-  }
+button:hover,
+button:active {
+  background-color: #0b83ae;
+  color: white;
+}
 
   table {
     font-family: arial, sans-serif;
@@ -56,16 +57,22 @@
     <th>Id</th>
     <th>Name</th>
     <th>Email</th>
-  </tr>
 {{#if users}}
+    <th>Actions</th>
+  </tr>
   {{#each users}}
   <tr>
     <td>{{this.id}}</td>
     <td>{{this.name}}</td>
     <td>{{this.email}}</td>
+    <td>
+      <button onclick="handleOnClick({{this.id}})" name="edit">Edit</button>
+      <button onclick="handleOnClick({{this.id}})" name="delete">Delete</button>
+    </td>
   </tr>
   {{/each}}
 {{else}}
+  </tr>
   <tr>
     <td>{{user.id}}</td>
     <td>{{user.name}}</td>
@@ -74,3 +81,19 @@
 {{/if}}
 </table>
 <button onclick="window.location.href='/'">Go Back</button>
+<script>
+  function handleOnClick(id) {
+    const name = event.target.name
+    if (name === 'delete') {
+      fetch(`/users/${id}`, {
+        method: 'DELETE'
+      })
+    }
+
+    {{!-- if (name === 'edit') {
+      fetch()
+    } else if (name === 'delete') {
+      fetch()
+    } --}}
+  }
+</script>
